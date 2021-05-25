@@ -254,12 +254,13 @@ def main(cli_args):
 
     if dev_dataset is None:
         args.evaluate_test_during_training = True  # If there is no dev dataset, only use test dataset
-    args.do_train = 0
+    #args.do_train = 0
     if args.do_train:
         global_step, tr_loss = train(args, model, tokenizer, train_dataset, dev_dataset, test_dataset)
         logger.info(" global_step = {}, average loss = {}".format(global_step, tr_loss))
 
     results = {}
+    results_ = {}
     if args.do_eval:
         checkpoints = list(
             os.path.dirname(c) for c in sorted(glob.glob(args.output_dir + "/**/" + "pytorch_model.bin", recursive=True))
@@ -277,11 +278,18 @@ def main(cli_args):
             result = evaluate(args, model, test_dataset, mode="test", global_step=global_step)
             result = dict((k + "_{}".format(global_step), v) for k, v in result.items())
             results.update(result)
+            result = evaluate(args, model, dev_dataset, mode="dev", global_step=global_step)
+            result = dict((k + "_{}".format(global_step), v) for k, v in result.items())
+            results_.update(result)
 
-        output_eval_file = os.path.join(args.output_dir, "test_eval_results_threshold02.txt")
+        output_eval_file = os.path.join(args.output_dir, "test_eval_results.txt")
         with open(output_eval_file, "w") as f_w:
             for key in sorted(results.keys()):
                 f_w.write("{} = {}\n".format(key, str(results[key])))
+        output_eval_file = os.path.join(args.output_dir, "dev_eval_results.txt")
+        with open(output_eval_file, "w") as f_w:
+            for key in sorted(results_.keys()):
+                f_w.write("{} = {}\n".format(key, str(results_[key])))
 
 
 if __name__ == '__main__':

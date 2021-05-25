@@ -61,7 +61,7 @@ def convert_examples_to_features(
         tokenizer,
         max_length,
 ):
-    processor = GoEmotionsProcessor(args)
+    processor = all_GoEmotionsProcessor(args)
     label_list_len = len(processor.get_labels())
 
     # def convert_to_one_hot_label(label):
@@ -158,8 +158,8 @@ class GoEmotionsProcessor(object):
                                                                   file_to_read)), mode)
 
 
-def load_and_cache_examples(args, tokenizer, mode):
-    processor = GoEmotionsProcessor(args)
+def all_load_and_cache_examples(args, tokenizer, mode):
+    processor = all_GoEmotionsProcessor(args)
     # Load data features from cache or dataset file
     cached_features_file = os.path.join(
         args.data_dir,

@@ -11,8 +11,8 @@ from tqdm import tqdm, trange
 from attrdict import AttrDict
 
 from transformers import (
-    BertConfig,
-    BertTokenizer,
+    RobertaConfig,
+    RobertaTokenizer,
     AdamW,
     get_linear_schedule_with_warmup
 )
@@ -89,8 +89,8 @@ def train(args,
             inputs = {
                 "input_ids": batch[0],
                 "attention_mask": batch[1],
-                "token_type_ids": batch[2],
-                "labels": batch[3]
+                #"token_type_ids": batch[2],
+                "labels": batch[2]
             }
             outputs = model(**inputs)
 
@@ -171,8 +171,8 @@ def evaluate(args, model, eval_dataset, mode, global_step=None):
             inputs = {
                 "input_ids": batch[0],
                 "attention_mask": batch[1],
-                "token_type_ids": batch[2],
-                "labels": batch[3]
+                #"token_type_ids": batch[2],
+                "labels": batch[2]
             }
             outputs = model(**inputs)
             tmp_eval_loss, logits = outputs[:2]
@@ -224,14 +224,14 @@ def main(cli_args):
     processor = GoEmotionsProcessor(args)
     label_list = processor.get_labels()
 
-    config = BertConfig.from_pretrained(
+    config = RobertaConfig.from_pretrained(
         args.model_name_or_path,
         num_labels=len(label_list),
         finetuning_task=args.task,
         id2label={str(i): label for i, label in enumerate(label_list)},
         label2id={label: i for i, label in enumerate(label_list)}
     )
-    tokenizer = BertTokenizer.from_pretrained(
+    tokenizer = RobertaTokenizer.from_pretrained(
         args.tokenizer_name_or_path,
     )
     model = BertForMultiLabelClassification.from_pretrained(
@@ -240,7 +240,7 @@ def main(cli_args):
     )
 
     # GPU or CPU
-    args.device = "cuda" if torch.cuda.is_available() and not args.no_cuda else "cpu"
+    args.device = "cuda:1" if torch.cuda.is_available() and not args.no_cuda else "cpu"
     model.to(args.device)
 
     # Load dataset
@@ -250,7 +250,7 @@ def main(cli_args):
 
     if dev_dataset is None:
         args.evaluate_test_during_training = True  # If there is no dev dataset, only use test dataset
-
+    args.do_train = 0
     if args.do_train:
         global_step, tr_loss = train(args, model, tokenizer, train_dataset, dev_dataset, test_dataset)
         logger.info(" global_step = {}, average loss = {}".format(global_step, tr_loss))
@@ -274,7 +274,7 @@ def main(cli_args):
             result = dict((k + "_{}".format(global_step), v) for k, v in result.items())
             results.update(result)
 
-        output_eval_file = os.path.join(args.output_dir, "eval_results.txt")
+        output_eval_file = os.path.join(args.output_dir, "test_eval_results.txt")#_threshold02.txt")
         with open(output_eval_file, "w") as f_w:
             for key in sorted(results.keys()):
                 f_w.write("{} = {}\n".format(key, str(results[key])))

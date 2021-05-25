@@ -34,10 +34,10 @@ class InputExample(object):
 class InputFeatures(object):
     """A single set of features of data."""
 
-    def __init__(self, input_ids, attention_mask, token_type_ids, label):
+    def __init__(self, input_ids, attention_mask, label):# token_type_ids, label):
         self.input_ids = input_ids
         self.attention_mask = attention_mask
-        self.token_type_ids = token_type_ids
+        self.token_type_ids = None #token_type_ids
         self.label = label
 
     def __repr__(self):
@@ -88,7 +88,7 @@ def convert_examples_to_features(
         logger.info("tokens: {}".format(" ".join([str(x) for x in tokenizer.tokenize(example.text_a)])))
         logger.info("input_ids: {}".format(" ".join([str(x) for x in features[i].input_ids])))
         logger.info("attention_mask: {}".format(" ".join([str(x) for x in features[i].attention_mask])))
-        logger.info("token_type_ids: {}".format(" ".join([str(x) for x in features[i].token_type_ids])))
+        #logger.info("token_type_ids: {}".format(" ".join([str(x) for x in features[i].token_type_ids])))
         logger.info("label: {}".format(" ".join([str(x) for x in features[i].label])))
 
     return features
@@ -179,8 +179,8 @@ def load_and_cache_examples(args, tokenizer, mode):
     # Convert to Tensors and build dataset
     all_input_ids = torch.tensor([f.input_ids for f in features], dtype=torch.long)
     all_attention_mask = torch.tensor([f.attention_mask for f in features], dtype=torch.long)
-    all_token_type_ids = torch.tensor([f.token_type_ids for f in features], dtype=torch.long)
+#    all_token_type_ids = torch.tensor([f.token_type_ids for f in features], dtype=torch.long)
     all_labels = torch.tensor([f.label for f in features], dtype=torch.float)
 
-    dataset = TensorDataset(all_input_ids, all_attention_mask, all_token_type_ids, all_labels)
+    dataset = TensorDataset(all_input_ids, all_attention_mask, all_labels)#all_token_type_ids, all_labels)
     return dataset

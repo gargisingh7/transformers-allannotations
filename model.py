@@ -1,15 +1,13 @@
 import torch.nn as nn
-from transformers import BertPreTrainedModel, BertModel
-
-
-class BertForMultiLabelClassification(BertPreTrainedModel):
+from transformers.models.roberta.modeling_roberta import RobertaPreTrainedModel, RobertaClassificationHead
+from transformers import RobertaModel
+class BertForMultiLabelClassification(RobertaPreTrainedModel):
     def __init__(self, config):
         super().__init__(config)
         self.num_labels = config.num_labels
 
-        self.bert = BertModel(config)
-        self.dropout = nn.Dropout(config.hidden_dropout_prob)
-        self.classifier = nn.Linear(config.hidden_size, self.config.num_labels)
+        self.roberta = RobertaModel(config, add_pooling_layer=False)
+        self.classifier = RobertaClassificationHead(config)
         self.loss_fct = nn.BCEWithLogitsLoss()
 
         self.init_weights()
@@ -24,7 +22,7 @@ class BertForMultiLabelClassification(BertPreTrainedModel):
             inputs_embeds=None,
             labels=None,
     ):
-        outputs = self.bert(
+        outputs = self.roberta(
             input_ids,
             attention_mask=attention_mask,
             token_type_ids=token_type_ids,
@@ -32,9 +30,8 @@ class BertForMultiLabelClassification(BertPreTrainedModel):
             head_mask=head_mask,
             inputs_embeds=inputs_embeds,
         )
-        pooled_output = outputs[1]
+        pooled_output = outputs[0]
 
-        pooled_output = self.dropout(pooled_output)
         logits = self.classifier(pooled_output)
 
         outputs = (logits,) + outputs[2:]  # add hidden states and attention if they are here
@@ -44,3 +41,4 @@ class BertForMultiLabelClassification(BertPreTrainedModel):
             outputs = (loss,) + outputs
 
         return outputs  # (loss), logits, (hidden_states), (attentions)
+

@@ -24,10 +24,13 @@ from utils import (
     compute_metrics
 )
 from all_data_loader import (
+    all_load_and_cache_examples,
+    all_GoEmotionsProcessor
+)
+from data_loader import (
     load_and_cache_examples,
     GoEmotionsProcessor
 )
-
 logger = logging.getLogger(__name__)
 
 
@@ -244,7 +247,7 @@ def main(cli_args):
     model.to(args.device)
 
     # Load dataset
-    train_dataset = load_and_cache_examples(args, tokenizer, mode="train") if args.train_file else None
+    train_dataset = all_load_and_cache_examples(args, tokenizer, mode="train") if args.train_file else None
     dev_dataset = load_and_cache_examples(args, tokenizer, mode="dev") if args.dev_file else None
     test_dataset = load_and_cache_examples(args, tokenizer, mode="test") if args.test_file else None
 
@@ -256,6 +259,7 @@ def main(cli_args):
         logger.info(" global_step = {}, average loss = {}".format(global_step, tr_loss))
 
     results = {}
+    results_ = {}
     if args.do_eval:
         checkpoints = list(
             os.path.dirname(c) for c in sorted(glob.glob(args.output_dir + "/**/" + "pytorch_model.bin", recursive=True))
@@ -273,11 +277,18 @@ def main(cli_args):
             result = evaluate(args, model, test_dataset, mode="test", global_step=global_step)
             result = dict((k + "_{}".format(global_step), v) for k, v in result.items())
             results.update(result)
+            result = evaluate(args, model, dev_dataset, mode="dev", global_step=global_step)
+            result = dict((k + "_{}".format(global_step), v) for k, v in result.items())
+            results_.update(result)
 
         output_eval_file = os.path.join(args.output_dir, "test_eval_results.txt")#_threshold02.txt")
         with open(output_eval_file, "w") as f_w:
             for key in sorted(results.keys()):
                 f_w.write("{} = {}\n".format(key, str(results[key])))
+        output_eval_file = os.path.join(args.output_dir, "dev_eval_results.txt")#_threshold02.txt")
+        with open(output_eval_file, "w") as f_w:
+            for key in sorted(results_.keys()):
+                f_w.write("{} = {}\n".format(key, str(results_[key])))
 
 
 if __name__ == '__main__':

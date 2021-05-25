@@ -96,7 +96,7 @@ def convert_examples_to_features(
     return features
 
 
-class GoEmotionsProcessor(object):
+class all_GoEmotionsProcessor(object):
     """Processor for the GoEmotions data set """
 
     def __init__(self, args):
@@ -158,8 +158,8 @@ class GoEmotionsProcessor(object):
                                                                   file_to_read)), mode)
 
 
-def load_and_cache_examples(args, tokenizer, mode):
-    processor = GoEmotionsProcessor(args)
+def all_load_and_cache_examples(args, tokenizer, mode):
+    processor = all_GoEmotionsProcessor(args)
     # Load data features from cache or dataset file
     cached_features_file = os.path.join(
         args.data_dir,

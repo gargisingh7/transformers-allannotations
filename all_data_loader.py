@@ -61,7 +61,7 @@ def convert_examples_to_features(
         tokenizer,
         max_length,
 ):
-    processor = GoEmotionsProcessor(args)
+    processor = all_GoEmotionsProcessor(args)
     label_list_len = len(processor.get_labels())
 
     # def convert_to_one_hot_label(label):

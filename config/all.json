@@ -31,5 +31,5 @@
   "logging_steps": 1000,
   "save_steps": 1000,
   "learning_rate": 5e-5,
-  "threshold": 0.25
+  "threshold": 0.3
 }

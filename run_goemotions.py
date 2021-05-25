@@ -23,7 +23,7 @@ from utils import (
     set_seed,
     compute_metrics
 )
-from data_loader import (
+from all_data_loader import (
     load_and_cache_examples,
     GoEmotionsProcessor
 )
@@ -240,7 +240,7 @@ def main(cli_args):
     )
 
     # GPU or CPU
-    args.device = "cuda" if torch.cuda.is_available() and not args.no_cuda else "cpu"
+    args.device = "cuda:0" if torch.cuda.is_available() and not args.no_cuda else "cpu"
     model.to(args.device)
 
     # Load dataset
@@ -250,7 +250,7 @@ def main(cli_args):
 
     if dev_dataset is None:
         args.evaluate_test_during_training = True  # If there is no dev dataset, only use test dataset
-
+    args.do_train = 0
     if args.do_train:
         global_step, tr_loss = train(args, model, tokenizer, train_dataset, dev_dataset, test_dataset)
         logger.info(" global_step = {}, average loss = {}".format(global_step, tr_loss))
@@ -270,11 +270,11 @@ def main(cli_args):
             global_step = checkpoint.split("-")[-1]
             model = BertForMultiLabelClassification.from_pretrained(checkpoint)
             model.to(args.device)
-            result = evaluate(args, model, test_dataset, mode="test", global_step=global_step)
+            result = evaluate(args, model, dev_dataset, mode="dev", global_step=global_step)
             result = dict((k + "_{}".format(global_step), v) for k, v in result.items())
             results.update(result)
 
-        output_eval_file = os.path.join(args.output_dir, "eval_results.txt")
+        output_eval_file = os.path.join(args.output_dir, "dev_eval_results_threshold02.txt")
         with open(output_eval_file, "w") as f_w:
             for key in sorted(results.keys()):
                 f_w.write("{} = {}\n".format(key, str(results[key])))

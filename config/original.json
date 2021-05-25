@@ -1,9 +1,9 @@
 {
   "task": "goemotions",
   "data_dir": "data/original",
-  "ckpt_dir": "ckpt/original",
-  "output_dir": "bert-base-cased-goemotions-original",
-  "train_file": "train.tsv",
+  "ckpt_dir": "ckpt_original/original",
+  "output_dir": "xlnet-base-cased-goemotions-original",
+  "train_file": "train_all.tsv",
   "dev_file": "dev.tsv",
   "test_file": "test.tsv",
   "label_file": "labels.txt",
@@ -22,14 +22,14 @@
   "max_steps": -1,
   "max_grad_norm": 1.0,
   "no_cuda": false,
-  "model_type": "bert",
-  "model_name_or_path": "bert-base-cased",
-  "tokenizer_name_or_path": "monologg/bert-base-cased-goemotions-original",
+  "model_type": "xlnet",
+  "model_name_or_path": "xlnet-base-cased",
+  "tokenizer_name_or_path": "xlnet-base-cased",
   "seed": 42,
   "train_batch_size": 16,
   "eval_batch_size": 32,
   "logging_steps": 1000,
   "save_steps": 1000,
   "learning_rate": 5e-5,
-  "threshold": 0.3
+  "threshold": 0.2
 }

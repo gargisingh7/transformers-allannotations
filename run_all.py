@@ -24,6 +24,10 @@ from utils import (
     compute_metrics
 )
 from all_data_loader import (
+    all_load_and_cache_examples,
+    all_GoEmotionsProcessor
+)
+from data_loader import (
     load_and_cache_examples,
     GoEmotionsProcessor
 )
@@ -244,7 +248,7 @@ def main(cli_args):
     model.to(args.device)
 
     # Load dataset
-    train_dataset = load_and_cache_examples(args, tokenizer, mode="train") if args.train_file else None
+    train_dataset = all_load_and_cache_examples(args, tokenizer, mode="train") if args.train_file else None
     dev_dataset = load_and_cache_examples(args, tokenizer, mode="dev") if args.dev_file else None
     test_dataset = load_and_cache_examples(args, tokenizer, mode="test") if args.test_file else None
 

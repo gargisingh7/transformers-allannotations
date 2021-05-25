@@ -1,5 +1,5 @@
 import torch.nn as nn
-from transformers/src/transformers/modeling_utils import PreTrainedModel
+from transformers.src.transformers.modeling_utils import PreTrainedModel
 from transformers import RobertaModel, RobertaConfig
 
 class RobertaPreTrainedModel(PreTrainedModel):

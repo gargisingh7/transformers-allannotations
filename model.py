@@ -1,14 +1,14 @@
 import torch.nn as nn
-from transformers import BertPreTrainedModel, BertModel
+from transformers import AlbertPreTrainedModel, AlbertModel
 
 
-class BertForMultiLabelClassification(BertPreTrainedModel):
+class BertForMultiLabelClassification(AlbertPreTrainedModel):
     def __init__(self, config):
         super().__init__(config)
         self.num_labels = config.num_labels
 
-        self.bert = BertModel(config)
-        self.dropout = nn.Dropout(config.hidden_dropout_prob)
+        self.albert = AlbertModel(config)
+        self.dropout = nn.Dropout(config.classifier_dropout_prob)#config.hidden_dropout_prob)
         self.classifier = nn.Linear(config.hidden_size, self.config.num_labels)
         self.loss_fct = nn.BCEWithLogitsLoss()
 
@@ -24,7 +24,7 @@ class BertForMultiLabelClassification(BertPreTrainedModel):
             inputs_embeds=None,
             labels=None,
     ):
-        outputs = self.bert(
+        outputs = self.albert(
             input_ids,
             attention_mask=attention_mask,
             token_type_ids=token_type_ids,

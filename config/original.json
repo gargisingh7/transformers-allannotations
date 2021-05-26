@@ -1,7 +1,7 @@
 {
   "task": "goemotions",
   "data_dir": "data/original",
-  "ckpt_dir": "ckpt_original/original",
+  "ckpt_dir": "/content/drive/MyDrive/ckpt_original/original",
   "output_dir": "xlnet-base-cased-goemotions-original",
   "train_file": "train_all.tsv",
   "dev_file": "dev.tsv",

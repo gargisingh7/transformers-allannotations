@@ -96,7 +96,7 @@ def convert_examples_to_features(
     return features
 
 
-class GoEmotionsProcessor(object):
+class all_GoEmotionsProcessor(object):
     """Processor for the GoEmotions data set """
 
     def __init__(self, args):

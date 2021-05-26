@@ -1,4 +1,5 @@
 import torch.nn as nn
+import torch
 from transformers.modeling_utils import PreTrainedModel
 from transformers import RobertaModel, RobertaConfig
 
